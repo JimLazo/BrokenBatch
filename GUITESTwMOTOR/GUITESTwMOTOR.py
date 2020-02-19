@@ -9,7 +9,7 @@ class Window(Frame):
         Frame.__init__(self, master)                 
         self.master = master
         self.init_window()
-        #self.init_GPIO()
+        self.init_GPIO()
         
         
         #creates the window widget
