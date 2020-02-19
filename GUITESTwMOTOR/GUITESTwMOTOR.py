@@ -2,7 +2,8 @@ from tkinter import *
 from PIL import Image, ImageTk
 from gpiozero import PWMOutputDevice, DigitalOutputDevice, Button as GP
 import csv
-import HX711  #pin 38 is the data pin, pin 40 is the sclk.
+# Needs to be imported as "hx" to work later on
+import HX711 as hx #pin 38 is the data pin, pin 40 is the sclk.
 class Window(Frame):
     #initializes parameters
     def __init__(self, master=None):
@@ -24,7 +25,7 @@ class Window(Frame):
         self.TMaxValue = 0
         self.MaxTeamName = 'none yet'
         #Images
-        bgImg = Image.open("background.jpg")
+        bgImg = Image.open("Background.jpg")
         render = ImageTk.PhotoImage(bgImg)
         img = Label(self, image=render)
         img.image = render
@@ -57,11 +58,10 @@ class Window(Frame):
         self.pin13 = DigitalOutputDevice(27)
         #pin15 is meant for the button to start. The other end connects to 3v3 at pin 17.
         self.start= GP.Button(22)
-        self.start.pull_up = false #Active Low button, write true for Active High
+        self.start.pull_up = False #Active Low button, write true for Active High
         self.start.bounce_time = 0.5  #prevents double clicking really fast
         self.start.when_pressed = StartRead #Bad programming, i couldnt figure it out any other way : (
-
-        
+    
 
 
 #From here on, this concerns Driver Controls.
@@ -94,24 +94,24 @@ class Window(Frame):
         self.pin12.value= 0
 
         #Call for Neutral State
-    def Neutral():
+    def Neutral(self):
         self.pin12.value = 0
         self.pin11.on()
         self.pin1.on()
 #From Here on, this is the stuff that concerns the buttons.
 #The bad programming starts here.
-    def StartRead():
+    def StartRead(self):
         self.start = None #Turn off the start button.
-        ReadOp()
+        ReadOp() # Not sure what this is, will investigate -Jim
                 
-    def TurnoffAll():
+    def TurnoffAll(self):
         self.destroy()
 
 #From here on this is the stuff that concerns the HX711/Load Cell
-    def GetValue():
+    def GetValue(self):
         self.CValue = hx.getValue() #the Value straight from the ADC
 
-    def tare():
+    def tare(self):
         hx.tare() #It does what it says -_-
 
 
