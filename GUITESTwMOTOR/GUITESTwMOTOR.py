@@ -1,6 +1,5 @@
 from tkinter import * 
-from PIL import Image, ImageTk
-from gpiozero import PWMOutputDevice, DigitalOutputDevice, Button as GP
+from gpiozero import PWMOutputDevice, LED, Button as GP
 import csv
 # Needs to be imported as "hx" to work later on
 import HX711 as hx #pin 38 is the data pin, pin 40 is the sclk.
@@ -49,13 +48,12 @@ class Window(Frame):
     def init_GPIO(self):
         #The pins that will control the Hbridge are pins 11,12,13,14. 
         #pin 12 is meant for PWM.
-        self.pin12 = PWMOutputDevice(18)
-        self.pin12.frequency = 60
-        self.pin12.value= 0.00
+        self.pin22 = PWMOutputDevice(25)
+        self.pin22.frequency = 1000
+        self.pin22.value= 0.00
         #Pins 11 and 13 are meant for motion. 11 goes to to topmost IO on the driver. 11 is IN 1
-        self.pin11 = DigitalOutputDevice(17)
-        self.pin11.initial_value = 0
-        self.pin13 = DigitalOutputDevice(27)
+        self.pin16 = LED(23)
+        self.pin14 = LED(24)
         #pin15 is meant for the button to start. The other end connects to 3v3 at pin 17.
         self.start= GP.Button(22)
         self.start.pull_up = False #Active Low button, write true for Active High
@@ -67,37 +65,37 @@ class Window(Frame):
 #From here on, this concerns Driver Controls.
         #Call to Move Motor Forward
     def Forward(self):
-        self.pin12.value = 0.25
-        self.pin13.off()
-        self.pin11.on()
+        self.pin22.value = 0.25
+        self.pin18.off()
+        self.pin16.on()
 
           #Call to Move Motor Backward      
     def Backward(self):
-        self.pin12.value = 0.25
-        self.pin11.off()
-        self.pin13.on()
+        self.pin22.value = 0.25
+        self.pin16.off()
+        self.pin18.on()
 
         #Call for Fullspeed Forward
     def FullForward(self):
         Forward()
-        self.pin12.value=1
+        self.pin22.value=1
 
         #Call for Fullspeed Backward
     def FullBackward(self):
         Backward()
-        self.pin12.value =1
+        self.pin22.value =1
 
         #Call for Brake
     def Brake(self):
-        self.pin11.off()
-        self.pin13.off()
-        self.pin12.value= 0
+        self.pin16.off()
+        self.pin18.off()
+        self.pin22.value= 0
 
         #Call for Neutral State
     def Neutral(self):
-        self.pin12.value = 0
-        self.pin11.on()
-        self.pin1.on()
+        self.pin22.value = 0
+        self.pin16.on()
+        self.pin18.on()
 #From Here on, this is the stuff that concerns the buttons.
 #The bad programming starts here.
     def StartRead(self):
